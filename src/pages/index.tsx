@@ -272,7 +272,7 @@ export default function Index() {
                   />
                   <Switch
                     control={control}
-                    label="De San Pascual a Alcázar"
+                    label="De La Montaña a Alcázar"
                     name="bus4"
                   />
                 </div>
