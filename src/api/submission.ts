@@ -9,7 +9,8 @@ export default async function handler(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
 ) {
-  const { firstName, lastName, alergias, bus }: FormParams = req.body
+  const { firstName, lastName, alergias, bus1, bus2, bus3, bus4 }: FormParams =
+    req.body
 
   const response = await notion.pages.create({
     parent: { database_id: databaseId },
@@ -36,9 +37,21 @@ export default async function handler(
           },
         ],
       },
-      Bus: {
+      "Bus-Alcazar-Iglesia": {
         type: "checkbox",
-        checkbox: !!bus,
+        checkbox: !!bus1,
+      },
+      "Bus-Iglesia-Montaña": {
+        type: "checkbox",
+        checkbox: !!bus2,
+      },
+      "Bus-Montaña-Iglesia": {
+        type: "checkbox",
+        checkbox: !!bus3,
+      },
+      "Bus-Iglesia-Alcazar": {
+        type: "checkbox",
+        checkbox: !!bus4,
       },
     },
   })

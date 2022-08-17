@@ -250,15 +250,30 @@ export default function Index() {
                 </div>
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="bus"
+                    htmlFor="bus1"
                     className="block text-sm font-medium text-gray-700"
                   >
                     ¿Necesitarás autobus?
                   </label>
                   <Switch
                     control={control}
-                    label="Necesitaré autobus"
-                    name="bus"
+                    label="De Alcázar a San Pascual"
+                    name="bus1"
+                  />
+                  <Switch
+                    control={control}
+                    label="De San Pascual a La Montaña"
+                    name="bus2"
+                  />
+                  <Switch
+                    control={control}
+                    label="De La Montaña a San Pascual"
+                    name="bus3"
+                  />
+                  <Switch
+                    control={control}
+                    label="De San Pascual a Alcázar"
+                    name="bus4"
                   />
                 </div>
                 <div className="sm:col-span-2">
