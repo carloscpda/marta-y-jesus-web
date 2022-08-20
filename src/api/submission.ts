@@ -3,16 +3,10 @@ import { Client } from "@notionhq/client"
 
 const notion = new Client({ auth: process.env.NOTION_API_TOKEN })
 
-const databaseId = process.env.NOTION_DATABASE_ID
+const databaseId = process.env.NOTION_DATABASE_ID || ""
 
-export default async function handler(
-  req: GatsbyFunctionRequest,
-  res: GatsbyFunctionResponse
-) {
-  const { firstName, lastName, alergias, bus1, bus2, bus3, bus4 }: FormParams =
-    req.body
-
-  const response = await notion.pages.create({
+const createRow = async ({ firstName, lastName, alergias, common }) =>
+  await notion.pages.create({
     parent: { database_id: databaseId },
     properties: {
       Name: {
@@ -37,24 +31,78 @@ export default async function handler(
           },
         ],
       },
-      "Bus-Alcazar-Iglesia": {
-        type: "checkbox",
-        checkbox: !!bus1,
-      },
-      "Bus-Iglesia-Montaña": {
-        type: "checkbox",
-        checkbox: !!bus2,
-      },
-      "Bus-Montaña-Iglesia": {
-        type: "checkbox",
-        checkbox: !!bus3,
-      },
-      "Bus-Iglesia-Alcazar": {
-        type: "checkbox",
-        checkbox: !!bus4,
-      },
+      ...common,
     },
   })
 
-  res.send(JSON.stringify({ message: response }))
+export default async function handler(
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse
+) {
+  const {
+    firstName,
+    lastName,
+    alergias,
+    bus1,
+    bus2,
+    bus3,
+    bus4,
+    withPlus,
+    plusFirstName,
+    plusLastName,
+    plusAlergias,
+    children = [],
+  }: FormParams = req.body
+
+  const common = {
+    "Bus-Alcazar-Iglesia": {
+      type: "checkbox",
+      checkbox: !!bus1,
+    },
+    "Bus-Iglesia-Montaña": {
+      type: "checkbox",
+      checkbox: !!bus2,
+    },
+    "Bus-Montaña-Iglesia": {
+      type: "checkbox",
+      checkbox: !!bus3,
+    },
+    "Bus-Iglesia-Alcazar": {
+      type: "checkbox",
+      checkbox: !!bus4,
+    },
+    "Va con": {
+      type: "rich_text",
+      rich_text: [
+        {
+          type: "text",
+          text: {
+            content: `${firstName} ${lastName}`,
+          },
+        },
+      ],
+    },
+  }
+
+  await createRow({ firstName, lastName, alergias, common })
+
+  if (withPlus) {
+    await createRow({
+      firstName: plusFirstName,
+      lastName: plusLastName,
+      alergias: plusAlergias,
+      common,
+    })
+  }
+
+  children.map(async child => {
+    await createRow({
+      firstName: child.firstName,
+      lastName: child.lastName,
+      alergias: child.alergias,
+      common,
+    })
+  })
+
+  res.send(JSON.stringify({ message: "ok" }))
 }

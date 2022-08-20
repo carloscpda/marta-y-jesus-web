@@ -2,7 +2,7 @@ import axios from "axios"
 import { navigate } from "gatsby"
 import React, { useState } from "react"
 import { Helmet } from "react-helmet"
-import { useForm } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import Switch from "../components/switch"
 
 const hotels = [
@@ -38,15 +38,41 @@ const hotels = [
   },
 ]
 
+type FormParams = {
+  firstName: string
+  lastName: string
+  alergias: string
+  withPlus: boolean
+  plusFirstName: string
+  plusLastName: string
+  plusAlergias: string
+  children: {
+    firstName: string
+    lastName: string
+    alergias: string
+  }[]
+  bus1: boolean
+  bus2: boolean
+  bus3: boolean
+  bus4: boolean
+}
+
 export default function Index() {
-  const { register, handleSubmit, control, watch, setValue } =
-    useForm<FormParams>()
+  const { register, handleSubmit, control, watch } = useForm<FormParams>()
+
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "children", // unique name for your Field Array,
+    }
+  )
 
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [withPlus] = watch(["withPlus"])
 
   const onSubmit = async (params: FormParams) => {
     setIsSubmitted(true)
-    await axios.post("/api/submission", params)
+    axios.post("/api/submission", params)
     navigate("thank-you")
   }
 
@@ -250,10 +276,174 @@ export default function Index() {
                 </div>
                 <div className="sm:col-span-2">
                   <label
+                    htmlFor="alergias"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    ¿Tienes alguna alguna alergia o restricción alimentaria?
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      {...register("alergias")}
+                      id="alergias"
+                      rows={4}
+                      className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                      defaultValue={""}
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="plus"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    ¿Irás con +1?
+                  </label>
+                  <Switch
+                    control={control}
+                    label={withPlus ? "Si" : "No"}
+                    name="withPlus"
+                  />
+                </div>
+                {withPlus && (
+                  <>
+                    <div>
+                      <label
+                        htmlFor="plusFirstName"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Nombre de tu +1
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          {...register("plusFirstName")}
+                          id="plusFirstName"
+                          type="text"
+                          autoComplete="given-name"
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="plusLastName"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Apellidos de tu +1
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          {...register("plusLastName")}
+                          type="text"
+                          id="plusLastName"
+                          autoComplete="family-name"
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label
+                        htmlFor="plusAlergias"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        ¿Tiene tu +1 alguna alguna alergia o restricción
+                        alimentaria?
+                      </label>
+                      <div className="mt-1">
+                        <textarea
+                          {...register("plusAlergias")}
+                          id="plusAlergias"
+                          rows={4}
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                          defaultValue={""}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+                <hr />
+                <div className="sm:col-span-2">
+                  <p className="block text-sm font-medium text-gray-700">
+                    ¿Irás con hijos?
+                  </p>
+                </div>
+
+                {fields.map((field, index) => (
+                  <div
+                    className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
+                    key={field.id}
+                  >
+                    <div key={`firstName-${field.id}`}>
+                      <label
+                        htmlFor={`children.${index}.firstName`}
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        {`Nombre del hijo ${index + 1}`}
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          {...register(`children.${index}.firstName`)}
+                          id={`children.${index}.firstName`}
+                          type="text"
+                          autoComplete="given-name"
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                        />
+                      </div>
+                    </div>
+                    <div key={`lastName-${field.id}`}>
+                      <label
+                        htmlFor={`children.${index}.lastName`}
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        {`Apellidos del hijo ${index + 1}`}
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          {...register(`children.${index}.lastName`)}
+                          type="text"
+                          id={`children.${index}.lastName`}
+                          autoComplete="family-name"
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                        />
+                      </div>
+                    </div>
+                    <div key={`alergias-${field.id}`} className="sm:col-span-2">
+                      <label
+                        htmlFor={`children.${index}.alergias`}
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        {`Alergias del hijo ${index + 1}`}
+                      </label>
+                      <div className="mt-1">
+                        <textarea
+                          {...register(`children.${index}.alergias`)}
+                          id={`children.${index}.alergias`}
+                          rows={4}
+                          className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                          defaultValue={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="sm:col-span-2">
+                  <button
+                    onClick={() => append({})}
+                    type="button"
+                    className="w-full inline-flex items-center justify-center px-6 py-3 border-2 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white boorder-blue-600 "
+                  >
+                    Añadir hijo
+                  </button>
+                </div>
+
+                <hr />
+                <div className="sm:col-span-2">
+                  <label
                     htmlFor="bus1"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    ¿Necesitarás autobus?
+                    {`¿${withPlus ? "Necesitaréis" : "Necesitarás"} autobus?`}
                   </label>
                   <Switch
                     control={control}
@@ -275,23 +465,6 @@ export default function Index() {
                     label="De La Montaña a Alcázar"
                     name="bus4"
                   />
-                </div>
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="alergias"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    ¿Tienes alguna alguna alergia o restricción alimentaria?
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      {...register("alergias")}
-                      id="alergias"
-                      rows={4}
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
-                      defaultValue={""}
-                    />
-                  </div>
                 </div>
                 <div className="sm:col-span-2">
                   <button
