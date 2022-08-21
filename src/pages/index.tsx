@@ -217,6 +217,23 @@ export default function Index() {
           </div>
         </div>
 
+        {/*  Back account */}
+        <div className="relative bg-white mt-24 mb-16 sm:py-24 lg:py-32">
+          <div className="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:px-8 lg:max-w-7xl flex flex-col items-center">
+            <h2 className="text-xl font-extrabold tracking-wider text-blue-600 uppercase">
+              Cuenta bancaria
+            </h2>
+            <div className="mt-4 text-center text-gray-500">
+              <p className="text-lg font-extralight">
+                Marta y Jesús:
+                <br />
+                ES93 0128 0088 6301 0002 8821
+              </p>
+              <p className="mt-1 text-lg">¡Gracias!</p>
+            </div>
+          </div>
+        </div>
+
         {/* Form */}
         <div
           className="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24"
