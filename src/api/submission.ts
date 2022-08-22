@@ -43,10 +43,8 @@ export default async function handler(
     firstName,
     lastName,
     alergias,
-    bus1,
     bus2,
     bus3,
-    bus4,
     withPlus,
     plusFirstName,
     plusLastName,
@@ -55,10 +53,6 @@ export default async function handler(
   }: FormParams = req.body
 
   const common = {
-    "Bus-Alcazar-Iglesia": {
-      type: "checkbox",
-      checkbox: !!bus1,
-    },
     "Bus-Iglesia-Montaña": {
       type: "checkbox",
       checkbox: !!bus2,
@@ -66,10 +60,6 @@ export default async function handler(
     "Bus-Montaña-Iglesia": {
       type: "checkbox",
       checkbox: !!bus3,
-    },
-    "Bus-Iglesia-Alcazar": {
-      type: "checkbox",
-      checkbox: !!bus4,
     },
     "Va con": {
       type: "rich_text",

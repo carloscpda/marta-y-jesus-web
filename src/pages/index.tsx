@@ -51,10 +51,8 @@ type FormParams = {
     lastName: string
     alergias: string
   }[]
-  bus1: boolean
   bus2: boolean
   bus3: boolean
-  bus4: boolean
 }
 
 export default function Index() {
@@ -464,11 +462,6 @@ export default function Index() {
                   </label>
                   <Switch
                     control={control}
-                    label="De Alcázar a San Pascual"
-                    name="bus1"
-                  />
-                  <Switch
-                    control={control}
                     label="De San Pascual a La Montaña"
                     name="bus2"
                   />
@@ -476,11 +469,6 @@ export default function Index() {
                     control={control}
                     label="De La Montaña a San Pascual"
                     name="bus3"
-                  />
-                  <Switch
-                    control={control}
-                    label="De La Montaña a Alcázar"
-                    name="bus4"
                   />
                 </div>
                 <div className="sm:col-span-2">
